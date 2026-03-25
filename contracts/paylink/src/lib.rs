@@ -1,6 +1,8 @@
 #![no_std]
 
-use soroban_sdk::{contract, contracterror, contractimpl, contracttype, Address, Env, String, Symbol};
+use soroban_sdk::{
+    contract, contracterror, contractimpl, contracttype, Address, Env, String, Symbol,
+};
 
 /// Extra ledgers beyond `ttl_ledgers` so persistent PayLink data remains readable until
 /// after the logical expiry ledger (archival buffer).
@@ -59,15 +61,13 @@ impl PayLinkContract {
     /// Marks `username` as an existing creator so `create_paylink` may succeed.
     /// Intended to be invoked from the same onboarding flow that provisions profiles on-chain.
     pub fn register_creator(env: Env, username: String) {
-        env.storage().persistent().set(&DataKey::Creator(username), &true);
+        env.storage()
+            .persistent()
+            .set(&DataKey::Creator(username), &true);
     }
 
     /// Credits yield to a staker's balance. Admin-only; does NOT check the paused flag.
-    pub fn credit_yield(
-        env: Env,
-        username: String,
-        amount: i128,
-    ) -> Result<(), Error> {
+    pub fn credit_yield(env: Env, username: String, amount: i128) -> Result<(), Error> {
         let admin: Address = env
             .storage()
             .instance()
@@ -79,7 +79,11 @@ impl PayLinkContract {
             return Err(Error::InvalidAmount);
         }
 
-        if !env.storage().persistent().has(&DataKey::Creator(username.clone())) {
+        if !env
+            .storage()
+            .persistent()
+            .has(&DataKey::Creator(username.clone()))
+        {
             return Err(Error::UserNotFound);
         }
 
@@ -87,9 +91,11 @@ impl PayLinkContract {
         let current: i128 = env.storage().persistent().get(&stake_key).unwrap_or(0);
         let new_balance = current + amount;
         env.storage().persistent().set(&stake_key, &new_balance);
-        env.storage()
-            .persistent()
-            .extend_ttl(&stake_key, PAYLINK_TTL_BUFFER_LEDGERS, PAYLINK_TTL_BUFFER_LEDGERS);
+        env.storage().persistent().extend_ttl(
+            &stake_key,
+            PAYLINK_TTL_BUFFER_LEDGERS,
+            PAYLINK_TTL_BUFFER_LEDGERS,
+        );
 
         env.events().publish(
             (Symbol::new(&env, "yield_credited"),),
@@ -189,21 +195,19 @@ impl PayLinkContract {
     }
 
     pub fn get_paylink(env: Env, token_id: String) -> Option<PayLinkData> {
-        env.storage()
-            .persistent()
-            .get(&DataKey::PayLink(token_id))
+        env.storage().persistent().get(&DataKey::PayLink(token_id))
     }
 }
 
 #[cfg(test)]
 mod test {
     use super::*;
-    use soroban_sdk::testutils::{Address as _, Ledger};
+    use soroban_sdk::testutils::Ledger;
 
     #[test]
     fn create_paylink_persists_paylink_data() {
         let env = Env::default();
-        let contract_id = env.register_contract(None, PayLinkContract);
+        let contract_id = env.register(PayLinkContract, ());
         let client = PayLinkContractClient::new(&env, &contract_id);
 
         let creator = String::from_str(&env, "alice");
@@ -215,7 +219,9 @@ mod test {
 
         client.create_paylink(&creator, &token_id, &100_i128, &note, &50);
 
-        let stored = client.get_paylink(&token_id).expect("expected PayLink in storage");
+        let stored = client
+            .get_paylink(&token_id)
+            .expect("expected PayLink in storage");
         assert_eq!(stored.creator_username, creator);
         assert_eq!(stored.amount, 100);
         assert_eq!(stored.note, note);
@@ -240,7 +246,9 @@ mod test {
         };
 
         env.as_contract(&contract_id, || {
-            env.storage().persistent().set(&DataKey::PayLink(token_id.clone()), &data);
+            env.storage()
+                .persistent()
+                .set(&DataKey::PayLink(token_id.clone()), &data);
             let retrieved: PayLinkData = env
                 .storage()
                 .persistent()
@@ -253,7 +261,7 @@ mod test {
     #[test]
     fn duplicate_token_id_returns_paylink_already_exists() {
         let env = Env::default();
-        let contract_id = env.register_contract(None, PayLinkContract);
+        let contract_id = env.register(PayLinkContract, ());
         let client = PayLinkContractClient::new(&env, &contract_id);
 
         let creator = String::from_str(&env, "bob");
@@ -272,7 +280,7 @@ mod test {
     #[test]
     fn zero_amount_returns_invalid_amount() {
         let env = Env::default();
-        let contract_id = env.register_contract(None, PayLinkContract);
+        let contract_id = env.register(PayLinkContract, ());
         let client = PayLinkContractClient::new(&env, &contract_id);
 
         let creator = String::from_str(&env, "carol");
@@ -292,7 +300,7 @@ mod test {
         let env = Env::default();
         env.mock_all_auths();
 
-        let contract_id = env.register_contract(None, PayLinkContract);
+        let contract_id = env.register(PayLinkContract, ());
         let client = PayLinkContractClient::new(&env, &contract_id);
 
         let creator = String::from_str(&env, "dave");
@@ -304,7 +312,9 @@ mod test {
 
         client.cancel_paylink(&creator, &token_id);
 
-        let stored = client.get_paylink(&token_id).expect("expected PayLink in storage");
+        let stored = client
+            .get_paylink(&token_id)
+            .expect("expected PayLink in storage");
         assert!(stored.cancelled);
         assert_eq!(stored.creator_username, creator);
         assert!(!stored.paid);
@@ -315,7 +325,7 @@ mod test {
         let env = Env::default();
         env.mock_all_auths();
 
-        let contract_id = env.register_contract(None, PayLinkContract);
+        let contract_id = env.register(PayLinkContract, ());
         let client = PayLinkContractClient::new(&env, &contract_id);
 
         let creator = String::from_str(&env, "erin");
@@ -337,7 +347,7 @@ mod test {
         let env = Env::default();
         env.mock_all_auths();
 
-        let contract_id = env.register_contract(None, PayLinkContract);
+        let contract_id = env.register(PayLinkContract, ());
         let client = PayLinkContractClient::new(&env, &contract_id);
 
         let creator = String::from_str(&env, "grace");
@@ -354,7 +364,9 @@ mod test {
                 .get::<_, PayLinkData>(&DataKey::PayLink(token_id.clone()))
                 .expect("expected PayLink in storage");
             stored.paid = true;
-            env.storage().persistent().set(&DataKey::PayLink(token_id.clone()), &stored);
+            env.storage()
+                .persistent()
+                .set(&DataKey::PayLink(token_id.clone()), &stored);
         });
 
         assert_eq!(
