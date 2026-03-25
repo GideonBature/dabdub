@@ -6,6 +6,7 @@ export interface AppConfig {
   apiPrefix: string;
   throttleTtl: number;
   throttleLimit: number;
+  frontendUrl: string;
 }
 
 export const appConfig = registerAs(
@@ -16,5 +17,6 @@ export const appConfig = registerAs(
     apiPrefix: process.env['API_PREFIX']!,
     throttleTtl: parseInt(process.env['THROTTLE_TTL']!, 10),
     throttleLimit: parseInt(process.env['THROTTLE_LIMIT']!, 10),
+    frontendUrl: process.env['FRONTEND_URL']!,
   }),
 );

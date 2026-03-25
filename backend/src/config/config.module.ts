@@ -23,6 +23,7 @@ const validationSchema = Joi.object({
   API_PREFIX: Joi.string().default('api/v1'),
   THROTTLE_TTL: Joi.number().integer().positive().default(60),
   THROTTLE_LIMIT: Joi.number().integer().positive().default(100),
+  FRONTEND_URL: Joi.string().uri().required().messages({ 'any.required': 'FRONTEND_URL is required' }),
 
   // ── Database ─────────────────────────────────────────────────────────────
   DB_HOST: Joi.string().required().messages({ 'any.required': 'DB_HOST is required' }),

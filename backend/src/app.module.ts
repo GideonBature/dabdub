@@ -9,6 +9,7 @@ import { HealthModule } from './health/health.module';
 import { AuthModule } from './auth/auth.module';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { UploadModule } from './uploads/upload.module';
+import { WsModule } from './ws/ws.module';
 
 @Module({
   imports: [
@@ -50,6 +51,9 @@ import { UploadModule } from './uploads/upload.module';
 
     // 6. File uploads — presign + confirm via Cloudflare R2.
     UploadModule,
+
+    // 7. WebSockets — Socket.io real-time gateway.
+    WsModule,
   ],
   providers: [
     // Global guard: every route requires a valid JWT unless decorated @Public().
@@ -60,4 +64,3 @@ import { UploadModule } from './uploads/upload.module';
   ],
 })
 export class AppModule {}
-
