@@ -6,6 +6,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import { AppConfigModule, appConfig, redisConfig } from './config';
 import { CacheModule } from './cache/cache.module';
 import { EmailModule } from './email/email.module';
+import { RatesModule } from './rates/rates.module';
 import { DatabaseModule } from './database/database.module';
 import { HealthModule } from './health/health.module';
 import { AuthModule } from './auth/auth.module';
@@ -52,7 +53,10 @@ import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
     // 6. Email — async transactional delivery via ZeptoMail + BullMQ.
     EmailModule,
 
-    // 7. Auth — register/login/refresh/logout + global JWT guard.
+    // 7. Rates — USDC/NGN live rates with Redis cache + BullMQ polling.
+    RatesModule,
+
+    // 8. Auth — register/login/refresh/logout + global JWT guard. — register/login/refresh/logout + global JWT guard.
     AuthModule,
   ],
   providers: [
