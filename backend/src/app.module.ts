@@ -5,6 +5,7 @@ import { BullModule } from '@nestjs/bull';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { AppConfigModule, appConfig, redisConfig } from './config';
 import { CacheModule } from './cache/cache.module';
+import { EmailModule } from './email/email.module';
 import { DatabaseModule } from './database/database.module';
 import { HealthModule } from './health/health.module';
 import { AuthModule } from './auth/auth.module';
@@ -55,7 +56,10 @@ import { TransactionsModule } from './transactions/transactions.module';
 
     HealthModule,
 
-    // 6. Auth — register/login/refresh/logout + global JWT guard.
+    // 6. Email — async transactional delivery via ZeptoMail + BullMQ.
+    EmailModule,
+
+    // 7. Auth — register/login/refresh/logout + global JWT guard.
     AuthModule,
 
     // 6. File uploads — presign + confirm via Cloudflare R2.
