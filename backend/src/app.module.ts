@@ -1,5 +1,6 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ConfigType } from '@nestjs/config';
 import { BullModule } from '@nestjs/bull';
 import { ThrottlerModule } from '@nestjs/throttler';
@@ -10,11 +11,17 @@ import { AuthModule } from './auth/auth.module';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { WsModule } from './ws/ws.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { LoggingModule } from './logging/logging.module';
+import { CorrelationIdMiddleware } from './logging/correlation-id.middleware';
+import { HttpLoggingInterceptor } from './logging/http-logging.interceptor';
 
 @Module({
   imports: [
     // 1. Config — global, validates all env vars at startup with abortEarly: false.
     AppConfigModule,
+
+    // 1b. Logging — Winston + Nest bridge.
+    LoggingModule,
 
     // 2. Database — owns the TypeORM root connection; see database.module.ts.
     DatabaseModule,
@@ -61,7 +68,15 @@ import { NotificationsModule } from './notifications/notifications.module';
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
     },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: HttpLoggingInterceptor,
+    },
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer): void {
+    consumer.apply(CorrelationIdMiddleware).forRoutes('*');
+  }
+}
 

@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 import { AppModule } from './app.module';
 import type { AppConfig } from './config';
 
@@ -10,6 +11,7 @@ async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule, {
     logger: ['error', 'warn', 'log', 'debug', 'verbose'],
   });
+  app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
 
   const config = app.get(ConfigService);
   const port = config.get<AppConfig['port']>('app.port')!;
