@@ -2,6 +2,12 @@ import { Entity, Column } from 'typeorm';
 import { BaseEntity } from '../../common/entities/base.entity';
 import { TierName } from '../../tier-config/entities/tier-config.entity';
 
+export enum UserRole {
+  USER = 'user',
+  MERCHANT = 'merchant',
+  ADMIN = 'admin',
+}
+
 @Entity('users')
 export class User extends BaseEntity {
   @Column({ unique: true, length: 255 })
@@ -30,6 +36,16 @@ export class User extends BaseEntity {
   /** True only for the fee-treasury wallet user (system account). */
   @Column({ name: 'is_treasury', default: false })
   isTreasury!: boolean;
+
+  @Column({ name: 'is_merchant', default: false })
+  isMerchant!: boolean;
+
+  @Column({
+    type: 'enum',
+    enum: UserRole,
+    default: UserRole.USER,
+  })
+  role!: UserRole;
 
   @Column({ name: 'is_active', default: true })
   isActive!: boolean;

@@ -20,6 +20,7 @@ import { LoggingModule } from './logging/logging.module';
 import { CorrelationIdMiddleware } from './logging/correlation-id.middleware';
 import { HttpLoggingInterceptor } from './logging/http-logging.interceptor';
 import { WebhooksModule } from './webhooks/webhooks.module';
+import { MerchantsModule } from './merchants/merchants.module';
 
 @Module({
   imports: [
@@ -80,6 +81,8 @@ import { WebhooksModule } from './webhooks/webhooks.module';
 
     // 8. Webhooks — subscriptions + signed deliveries + retries.
     WebhooksModule,
+
+    MerchantsModule,
   ],
   providers: [
     // Global guard: every route requires a valid JWT unless decorated @Public().

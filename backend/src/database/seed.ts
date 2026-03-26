@@ -13,7 +13,7 @@ import 'reflect-metadata';
 import * as bcrypt from 'bcrypt';
 import { DataSource, Repository } from 'typeorm';
 import { AppDataSource } from './data-source';
-import { User } from '../users/entities/user.entity';
+import { User, UserRole } from '../users/entities/user.entity';
 import { TierConfig, TierName } from '../tier-config/entities/tier-config.entity';
 import { FeeConfig, FeeType } from '../fee-config/entities/fee-config.entity';
 
@@ -135,6 +135,8 @@ async function seedUsers(repo: Repository<User>): Promise<void> {
         passwordHash,
         displayName: seed.displayName,
         isAdmin: seed.isAdmin,
+        role: seed.isAdmin ? UserRole.ADMIN : UserRole.USER,
+        isMerchant: false,
         isTreasury: seed.isTreasury,
         isActive: true,
       }),

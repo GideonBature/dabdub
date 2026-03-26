@@ -11,7 +11,7 @@ import type { ConfigType } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
 import { jwtConfig } from '../config/jwt.config';
-import { User } from '../users/entities/user.entity';
+import { User, UserRole } from '../users/entities/user.entity';
 import { RefreshToken } from './entities/refresh-token.entity';
 import { Session } from './entities/session.entity';
 import type { RegisterDto } from './dto/register.dto';
@@ -21,7 +21,7 @@ import type { TokenResponseDto } from './dto/token-response.dto';
 export interface JwtPayload {
   sub: string;
   username: string;
-  role: 'admin' | 'user';
+  role: 'admin' | 'merchant' | 'user';
   sessionId: string;
 }
 
@@ -150,7 +150,11 @@ export class AuthService {
     ipAddress?: string,
     deviceInfo?: Record<string, unknown>,
   ): Promise<TokenResponseDto> {
-    const role: 'admin' | 'user' = user.isAdmin ? 'admin' : 'user';
+    const role: JwtPayload['role'] = user.isAdmin
+      ? 'admin'
+      : user.role === UserRole.MERCHANT
+        ? 'merchant'
+        : 'user';
     const payload: JwtPayload = {
       sub: user.id,
       username: user.username,
