@@ -2,6 +2,7 @@ import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ConfigType } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
 import { BullModule } from '@nestjs/bull';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { AppConfigModule, appConfig, redisConfig } from './config';
@@ -38,6 +39,9 @@ import { WithdrawalsModule } from './withdrawals/withdrawals.module';
   imports: [
     // 1. Config — global, validates all env vars at startup with abortEarly: false.
     AppConfigModule,
+
+    // 1a. Schedule — enables @Cron decorators for background jobs.
+    ScheduleModule.forRoot(),
 
     // 1b. Logging — Winston + Nest bridge.
     LoggingModule,
