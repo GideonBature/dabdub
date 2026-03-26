@@ -1,44 +1,42 @@
-version: "3.9"
+version: '3.9'
 
 services:
-  backend:
-    image: ${IMAGE}
-    container_name: dabdub-backend
-    env_file:
-      - .env
-    ports:
-      - "${APP_PORT:-4000}:4000"
-    restart: unless-stopped
-
   postgres:
-    image: postgres:15-alpine
-    container_name: dabdub_postgres
+    image: postgres:16-alpine
+    container_name: cheese_postgres
+    restart: unless-stopped
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: dabdub_dev
+      POSTGRES_USER: ${DB_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_DB: ${DB_NAME:-cheese_db}
     ports:
-      - "5445:5432"
+      - '${DB_PORT:-5432}:5432'
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    restart: always
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ['CMD-SHELL', 'pg_isready -U ${DB_USERNAME:-postgres} -d ${DB_NAME:-cheese_db}']
       interval: 10s
       timeout: 5s
       retries: 5
 
   redis:
-    image: redis:alpine
-    container_name: dabdub_redis
+    image: redis:7-alpine
+    container_name: cheese_redis
+    restart: unless-stopped
+    command: >
+      sh -c "if [ -n '$$REDIS_PASSWORD' ]; then redis-server --requirepass $$REDIS_PASSWORD; else redis-server; fi"
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
     ports:
-      - "6379:6379"
-    restart: always
+      - '${REDIS_PORT:-6379}:6379'
+    volumes:
+      - redis_data:/data
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ['CMD', 'redis-cli', 'ping']
       interval: 10s
       timeout: 5s
-      retries: 3
+      retries: 5
 
 volumes:
   postgres_data:
+  redis_data:

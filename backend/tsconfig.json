@@ -1,47 +1,26 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
-    "target": "ES2023",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "resolvePackageJsonExports": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
     "declaration": true,
     "removeComments": true,
-    "sourceMap": true,
-    "outDir": "./dist",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "strict": false,
-    "strictPropertyInitialization": false,
-    "noImplicitAny": false,
-    "strictNullChecks": false,
-    "forceConsistentCasingInFileNames": false,
-    "noEmitOnError": false,
+    "allowSyntheticDefaultImports": true,
+    "target": "ES2023",
+    "sourceMap": true,
+    "outDir": "./dist",
     "baseUrl": "./",
-    "paths": {
-      "@config/*": [
-        "src/config/*"
-      ],
-      "@modules/*": [
-        "src/modules/*"
-      ],
-      "@common/*": [
-        "src/common/*"
-      ]
-    },
-    "noImplicitThis": false,
     "incremental": true,
     "skipLibCheck": true,
-    "noEmitOnError": false,
-    "noImplicitThis": false,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true
-  },
-  "ts-node": {
-    "transpileOnly": true,
-    "compilerOptions": {
-      "module": "commonjs"
-    }
-  },
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
+    "strict": true,
+    "strictNullChecks": true,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitAny": true,
+    "strictBindCallApply": true,
+    "noFallthroughCasesInSwitch": true
+  }
 }

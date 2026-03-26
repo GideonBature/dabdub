@@ -1,15 +1,25 @@
 import { Module } from '@nestjs/common';
 import { TerminusModule } from '@nestjs/terminus';
-import { HttpModule } from '@nestjs/axios';
-import { HealthController } from './controllers/health.controller';
-import { HealthService } from './services/health.service';
-import { GlobalConfigModule } from '../config/config.module';
-import { RedisModule } from '../common/redis';
-import { BlockchainHealthIndicator } from './indicators/blockchain.health';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { HealthController } from './health.controller';
+import { RedisHealthIndicator } from './redis.health';
+import { StellarHealthIndicator } from './stellar.health';
 
+/**
+ * HealthModule wires together all health indicators and exposes GET /health.
+ *
+ * Config tokens (redisConfig, stellarConfig) are globally available because
+ * AppConfigModule sets isGlobal: true — no need to re-import AppConfigModule here.
+ *
+ * TypeOrmModule is imported so TypeOrmHealthIndicator can access the data source.
+ */
 @Module({
-  imports: [TerminusModule, HttpModule, GlobalConfigModule, RedisModule],
+  imports: [
+    TerminusModule,
+    // Required for TypeOrmHealthIndicator to resolve the active DataSource.
+    TypeOrmModule,
+  ],
   controllers: [HealthController],
-  providers: [HealthService, BlockchainHealthIndicator],
+  providers: [RedisHealthIndicator, StellarHealthIndicator],
 })
 export class HealthModule {}

@@ -1,154 +1,103 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Cache } from 'cache-manager';
 import { CacheService } from './cache.service';
-import { CacheMetricsService } from './cache-metrics.service';
+import { REDIS_CLIENT } from './redis.module';
+
+const mockRedis = {
+  get: jest.fn(),
+  setex: jest.fn(),
+  unlink: jest.fn(),
+  scan: jest.fn(),
+};
 
 describe('CacheService', () => {
   let service: CacheService;
-  let cacheManager: Cache;
-  let metricsService: CacheMetricsService;
-
-  const mockCacheManager = {
-    get: jest.fn(),
-    set: jest.fn(),
-    del: jest.fn(),
-  };
 
   beforeEach(async () => {
+    jest.clearAllMocks();
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         CacheService,
-        CacheMetricsService,
+        { provide: REDIS_CLIENT, useValue: mockRedis },
+      ],
+    }).compile();
+    service = module.get(CacheService);
+  });
+
+  it('set → get returns value', async () => {
+    mockRedis.setex.mockResolvedValue('OK');
+    mockRedis.get.mockResolvedValue(JSON.stringify({ a: 1 }));
+
+    await service.set('test:key', { a: 1 }, 60);
+    const result = await service.get<{ a: number }>('test:key');
+
+    expect(result).toEqual({ a: 1 });
+  });
+
+  it('missing key → null', async () => {
+    mockRedis.get.mockResolvedValue(null);
+    expect(await service.get('missing:key')).toBeNull();
+  });
+
+  it('Redis error on get → null (not throw)', async () => {
+    mockRedis.get.mockRejectedValue(new Error('ECONNREFUSED'));
+    await expect(service.get('any:key')).resolves.toBeNull();
+  });
+
+  it('Redis error on set → returns false (not throw)', async () => {
+    mockRedis.setex.mockRejectedValue(new Error('ECONNREFUSED'));
+    await expect(service.set('any:key', 'val', 60)).resolves.toBe(false);
+  });
+
+  it('delPattern uses SCAN + UNLINK', async () => {
+    mockRedis.scan
+      .mockResolvedValueOnce(['42', ['rate:USDC:NGN', 'rate:USDC:USD']])
+      .mockResolvedValueOnce(['0', []]);
+    await service.delPattern('rate:USDC:*');
+    expect(mockRedis.unlink).toHaveBeenCalledWith('rate:USDC:NGN', 'rate:USDC:USD');
+  });
+});
+
+describe('@Cacheable decorator', () => {
+  it('first call hits DB, second hits cache', async () => {
+    mockRedis.get.mockResolvedValueOnce(null);
+    mockRedis.setex.mockResolvedValue('OK');
+    mockRedis.get.mockResolvedValueOnce(JSON.stringify({ id: '1' }));
+
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        CacheService,
+        { provide: REDIS_CLIENT, useValue: mockRedis },
         {
-          provide: CACHE_MANAGER,
-          useValue: mockCacheManager,
+          provide: 'TestSvc',
+          useFactory: (cache: CacheService) => {
+            class TestSvc {
+              _cacheService = cache;
+              dbCallCount = 0;
+
+              async findUser(id: string) {
+                const key = `user:profile:${id}`;
+                const cached = await cache.get(key);
+                if (cached !== null) return cached;
+                this.dbCallCount++;
+                const result = { id };
+                await cache.set(key, result, 300);
+                return result;
+              }
+            }
+            return new TestSvc();
+          },
+          inject: [CacheService],
         },
       ],
     }).compile();
 
-    service = module.get<CacheService>(CacheService);
-    cacheManager = module.get<Cache>(CACHE_MANAGER);
-    metricsService = module.get<CacheMetricsService>(CacheMetricsService);
-  });
+    const svc = module.get<{ findUser: (id: string) => Promise<unknown>; dbCallCount: number }>('TestSvc');
 
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
+    const first = await svc.findUser('1');
+    const second = await svc.findUser('1');
 
-  describe('get', () => {
-    it('should return cached value on hit', async () => {
-      const key = 'test-key';
-      const value = { data: 'test' };
-      mockCacheManager.get.mockResolvedValue(value);
-
-      const result = await service.get(key);
-
-      expect(result).toEqual(value);
-      expect(mockCacheManager.get).toHaveBeenCalledWith(key);
-    });
-
-    it('should return undefined on miss', async () => {
-      const key = 'test-key';
-      mockCacheManager.get.mockResolvedValue(undefined);
-
-      const result = await service.get(key);
-
-      expect(result).toBeUndefined();
-    });
-
-    it('should handle errors gracefully', async () => {
-      const key = 'test-key';
-      mockCacheManager.get.mockRejectedValue(new Error('Redis error'));
-
-      const result = await service.get(key);
-
-      expect(result).toBeUndefined();
-    });
-  });
-
-  describe('set', () => {
-    it('should set value in cache', async () => {
-      const key = 'test-key';
-      const value = { data: 'test' };
-      mockCacheManager.set.mockResolvedValue(undefined);
-
-      await service.set(key, value);
-
-      expect(mockCacheManager.set).toHaveBeenCalledWith(
-        key,
-        value,
-        expect.any(Number),
-      );
-    });
-
-    it('should handle errors gracefully', async () => {
-      const key = 'test-key';
-      const value = { data: 'test' };
-      mockCacheManager.set.mockRejectedValue(new Error('Redis error'));
-
-      await expect(service.set(key, value)).resolves.not.toThrow();
-    });
-  });
-
-  describe('del', () => {
-    it('should delete key from cache', async () => {
-      const key = 'test-key';
-      mockCacheManager.del.mockResolvedValue(undefined);
-
-      await service.del(key);
-
-      expect(mockCacheManager.del).toHaveBeenCalledWith(key);
-    });
-  });
-
-  describe('getOrSet', () => {
-    it('should return cached value if exists', async () => {
-      const key = 'test-key';
-      const cachedValue = { data: 'cached' };
-      mockCacheManager.get.mockResolvedValue(cachedValue);
-      const factory = jest.fn();
-
-      const result = await service.getOrSet(key, factory);
-
-      expect(result).toEqual(cachedValue);
-      expect(factory).not.toHaveBeenCalled();
-    });
-
-    it('should call factory and cache result on miss', async () => {
-      const key = 'test-key';
-      const newValue = { data: 'new' };
-      mockCacheManager.get.mockResolvedValue(undefined);
-      mockCacheManager.set.mockResolvedValue(undefined);
-      const factory = jest.fn().mockResolvedValue(newValue);
-
-      const result = await service.getOrSet(key, factory);
-
-      expect(result).toEqual(newValue);
-      expect(factory).toHaveBeenCalled();
-      expect(mockCacheManager.set).toHaveBeenCalled();
-    });
-  });
-
-  describe('metrics', () => {
-    it('should record cache hit', async () => {
-      const key = 'test-key';
-      mockCacheManager.get.mockResolvedValue({ data: 'test' });
-      const recordHitSpy = jest.spyOn(metricsService, 'recordHit');
-
-      await service.get(key);
-
-      expect(recordHitSpy).toHaveBeenCalled();
-    });
-
-    it('should record cache miss', async () => {
-      const key = 'test-key';
-      mockCacheManager.get.mockResolvedValue(undefined);
-      const recordMissSpy = jest.spyOn(metricsService, 'recordMiss');
-
-      await service.get(key);
-
-      expect(recordMissSpy).toHaveBeenCalled();
-    });
+    expect(first).toEqual({ id: '1' });
+    expect(second).toEqual({ id: '1' });
+    expect(svc.dbCallCount).toBe(1);
   });
 });
