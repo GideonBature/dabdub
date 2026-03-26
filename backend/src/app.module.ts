@@ -28,6 +28,7 @@ import { AdminModule } from './admin/admin.module';
 import { EarningsModule } from './earnings/earnings.module';
 import { SmsModule } from './sms/sms.module';
 import { PushModule } from './push/push.module';
+import { WithdrawalsModule } from './withdrawals/withdrawals.module';
 
 @Module({
   imports: [
@@ -105,6 +106,8 @@ import { PushModule } from './push/push.module';
 
     // 12. Earnings — yield dashboard, APY display, projections.
     EarningsModule,
+
+    WithdrawalsModule,
   ],
   providers: [
     {
