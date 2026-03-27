@@ -17,11 +17,13 @@ import {
   PayLinkProcessor,
 } from './paylink.processor';
 import { PayLinkService } from './paylink.service';
+import { PinModule } from '../pin/pin.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([PayLink, User, Merchant, Transaction]),
     BullModule.registerQueue({ name: PAYLINK_QUEUE }),
+    PinModule,
     SorobanModule,
     WsModule,
     EmailModule,

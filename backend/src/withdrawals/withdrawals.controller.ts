@@ -20,7 +20,10 @@ export class WithdrawalsController {
   constructor(private readonly withdrawalsService: WithdrawalsService) {}
 
   @Post()
-  create(@Req() req: { user: { id: string } }, @Body() dto: CreateWithdrawalDto) {
+  create(
+    @Req() req: { user: { id: string } },
+    @Body() dto: CreateWithdrawalDto,
+  ) {
     return this.withdrawalsService.create(req.user.id, dto);
   }
 

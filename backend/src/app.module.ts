@@ -34,11 +34,13 @@ import { MaintenanceModeMiddleware } from './app-config/middleware/maintenance-m
 import { AdminModule } from './admin/admin.module';
 import { EarningsModule } from './earnings/earnings.module';
 import { SmsModule } from './sms/sms.module';
+import { PinModule } from './pin/pin.module';
+import { TransfersModule } from './transfers/transfers.module';
+import { WithdrawalsModule } from './withdrawals/withdrawals.module';
 import { PasskeyModule } from './passkey/passkey.module';
 import { SecurityModule } from './security/security.module';
-import { TransactionModule } from './transactions/transactions.module';
+import { TransactionsModule } from './transactions/transactions.module';
 import { PushModule } from './push/push.module';
-import { WithdrawalsModule } from './withdrawals/withdrawals.module';
 import { WaitlistModule } from './waitlist/waitlist.module';
 import { KycModule } from './kyc/kyc.module';
 import { ReportsModule } from './reports/reports.module';
@@ -111,6 +113,9 @@ import { ReportsModule } from './reports/reports.module';
 
     MerchantsModule,
     UsersModule,
+    PinModule,
+    TransfersModule,
+    WithdrawalsModule,
     SecurityModule,
     BankAccountsModule,
     VirtualAccountModule,
@@ -140,7 +145,7 @@ import { ReportsModule } from './reports/reports.module';
     PasskeyModule,
 
     // Transactions — activity history with cursor-based pagination.
-    TransactionModule,
+    TransactionsModule,
 
     // Waitlist — viral pre-launch signups with referral points.
     WaitlistModule,

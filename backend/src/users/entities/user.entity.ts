@@ -29,6 +29,9 @@ export class User extends BaseEntity {
   @Column({ name: 'password_hash', length: 255 })
   passwordHash!: string;
 
+  @Column({ name: 'pin_hash', length: 255, nullable: true, default: null })
+  pinHash!: string | null;
+
   @Column({ unique: true, length: 20, nullable: true, default: null })
   phone!: string | null;
 

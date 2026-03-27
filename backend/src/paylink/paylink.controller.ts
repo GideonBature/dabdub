@@ -9,9 +9,11 @@ import {
   Post,
   Query,
   Req,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
+  ApiHeader,
   ApiOperation,
   ApiResponse,
   ApiTags,
@@ -25,6 +27,8 @@ import { ListPayLinksResponseDto } from './dto/list-pay-links-response.dto';
 import { PayLinkPublicDto } from './dto/pay-link-public.dto';
 import { PayLink } from './entities/pay-link.entity';
 import { PayLinkService } from './paylink.service';
+import { RequirePin } from '../pin/decorators/require-pin.decorator';
+import { PinGuard } from '../pin/guards/pin.guard';
 
 type AuthenticatedRequest = Request & { user: User };
 
@@ -53,6 +57,13 @@ export class PayLinkController {
   }
 
   @Post(':tokenId/pay')
+  @RequirePin()
+  @UseGuards(PinGuard)
+  @ApiHeader({
+    name: 'X-Transaction-Pin',
+    description: '4-digit transaction PIN',
+    required: true,
+  })
   @ApiOperation({ summary: 'Pay a PayLink' })
   @ApiResponse({ status: 200, type: PayLink })
   pay(
