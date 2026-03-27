@@ -3,7 +3,7 @@ import { EarningsService } from './earnings.service';
 import { TierService } from '../tier-config/tier.service';
 import { Public } from '../auth/decorators/public.decorator';
 
-@Controller('earnings')
+@Controller({ path: 'earnings', version: '1' })
 export class EarningsController {
   constructor(
     private readonly earningsService: EarningsService,

@@ -25,7 +25,7 @@ const validationSchema = Joi.object({
       'any.only': 'NODE_ENV must be development | production | test',
     }),
   PORT: Joi.number().integer().positive().default(3000),
-  API_PREFIX: Joi.string().default('api/v1'),
+  API_PREFIX: Joi.string().default('api'),
   THROTTLE_TTL: Joi.number().integer().positive().default(60),
   THROTTLE_LIMIT: Joi.number().integer().positive().default(100),
   FRONTEND_URL: Joi.string()

@@ -19,7 +19,7 @@ interface RequestWithUser {
 
 @ApiTags('webhooks')
 @ApiBearerAuth()
-@Controller('webhooks')
+@Controller({ path: 'webhooks', version: '1' })
 export class WebhooksController {
   constructor(private readonly webhooks: WebhookService) {}
 

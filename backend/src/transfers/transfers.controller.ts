@@ -21,7 +21,7 @@ type AuthenticatedRequest = Request & { user: User };
 
 @ApiTags('transfers')
 @ApiBearerAuth()
-@Controller('transfers')
+@Controller({ path: 'transfers', version: '1' })
 export class TransfersController {
   @Post()
   @RequirePin()

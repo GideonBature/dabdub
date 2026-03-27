@@ -18,7 +18,7 @@ export class UnregisterTokenDto {
 }
 
 @UseGuards(JwtAuthGuard)
-@Controller('push')
+@Controller({ path: 'push', version: '1' })
 export class PushController {
   constructor(private readonly pushService: PushService) {}
 

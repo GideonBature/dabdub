@@ -8,7 +8,7 @@ import {
 } from './dto/transaction-response.dto';
 import { Request } from 'express';
 
-@Controller('transactions')
+@Controller({ path: 'transactions', version: '1' })
 @UseGuards(JwtAuthGuard)
 export class TransactionController {
   constructor(private readonly transactionService: TransactionService) {}

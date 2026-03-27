@@ -4,7 +4,7 @@ import { UsersService } from './users.service';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { UserResponseDto } from './dto/user-response.dto';
 
-@Controller('users')
+@Controller({ path: 'users', version: '1' })
 @ApiBearerAuth()
 export class UsersController {
   constructor(private usersService: UsersService) {}

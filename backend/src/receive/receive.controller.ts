@@ -22,7 +22,7 @@ type AuthenticatedRequest = Request & { user: User };
 
 @ApiTags('receive')
 @ApiBearerAuth()
-@Controller('receive')
+@Controller({ path: 'receive', version: '1' })
 export class ReceiveController {
   constructor(private readonly receiveService: ReceiveService) {}
 

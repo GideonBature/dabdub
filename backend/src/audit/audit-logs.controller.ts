@@ -8,7 +8,7 @@ import { Role } from '../rbac/rbac.types';
 
 @ApiTags('admin')
 @ApiBearerAuth()
-@Controller('admin/audit-logs')
+@Controller({ path: 'admin/audit-logs', version: '1' })
 @UseGuards(RolesGuard)
 @Roles(Role.Admin, Role.SuperAdmin)
 export class AuditLogsController {

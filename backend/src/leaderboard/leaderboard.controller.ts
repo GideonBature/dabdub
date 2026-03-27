@@ -14,7 +14,7 @@ type NamespaceParam = 'waitlist' | 'users';
 
 @ApiTags('leaderboard')
 @ApiBearerAuth()
-@Controller('leaderboard')
+@Controller({ path: 'leaderboard', version: '1' })
 export class LeaderboardController {
   constructor(private readonly leaderboardService: LeaderboardService) {}
 

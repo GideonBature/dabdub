@@ -25,7 +25,7 @@ interface AuthenticatedRequest extends Request {
 @ApiTags('security')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
-@Controller('security')
+@Controller({ path: 'security', version: '1' })
 export class SecurityController {
   constructor(private readonly securityService: SecurityService) {}
 

@@ -20,7 +20,7 @@ type AuthReq = Request & { user: User };
 
 @ApiTags('reports')
 @ApiBearerAuth()
-@Controller()
+@Controller({ version: '1' })
 export class ReportsController {
   constructor(private readonly reportsService: ReportsService) {}
 

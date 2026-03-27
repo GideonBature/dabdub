@@ -10,7 +10,7 @@ interface RequestWithUser extends Request {
 
 @ApiTags('notifications')
 @ApiBearerAuth()
-@Controller('notifications')
+@Controller({ path: 'notifications', version: '1' })
 export class NotificationsController {
   constructor(private readonly notifications: NotificationService) {}
 

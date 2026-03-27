@@ -11,7 +11,7 @@ import { TierName } from './entities/tier-config.entity';
 import { Public } from '../auth/decorators/public.decorator';
 import { AuditInterceptor, Audit } from '../audit/audit.interceptor';
 
-@Controller()
+@Controller({ version: '1' })
 export class TierController {
   constructor(private readonly tierService: TierService) {}
 

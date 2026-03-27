@@ -18,7 +18,7 @@ type AuthenticatedRequest = Request & { user: User };
 
 @ApiTags('merchants')
 @ApiBearerAuth()
-@Controller('merchants')
+@Controller({ path: 'merchants', version: '1' })
 export class MerchantsController {
   constructor(private readonly merchantsService: MerchantsService) {}
 

@@ -14,7 +14,7 @@ import { VirtualAccountService } from './virtual-account.service';
 import { VirtualAccountResponseDto } from './dto/virtual-account-response.dto';
 import { Public } from '../auth/decorators/public.decorator';
 
-@Controller()
+@Controller({ version: '1' })
 export class VirtualAccountController {
   constructor(private readonly vaService: VirtualAccountService) {}
 

@@ -22,7 +22,7 @@ class StubAuthGuard implements CanActivate {
 
 @ApiTags('qr')
 @ApiBearerAuth()
-@Controller('qr')
+@Controller({ path: 'qr', version: '1' })
 export class QrController {
   constructor(private readonly qrService: QrService) {}
 

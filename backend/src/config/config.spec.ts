@@ -10,7 +10,7 @@ import type { JwtConfig } from './jwt.config';
 const VALID_ENV: NodeJS.ProcessEnv = {
   NODE_ENV: 'test',
   PORT: '3001',
-  API_PREFIX: 'api/v1',
+  API_PREFIX: 'api',
   THROTTLE_TTL: '60',
   THROTTLE_LIMIT: '100',
   FRONTEND_URL: 'http://localhost:3000',
@@ -85,7 +85,7 @@ describe('AppConfigModule', () => {
   it('returns correct typed AppConfig values', () => {
     expect(config.get<AppConfig['port']>('app.port')).toBe(3001);
     expect(config.get<AppConfig['nodeEnv']>('app.nodeEnv')).toBe('test');
-    expect(config.get<AppConfig['apiPrefix']>('app.apiPrefix')).toBe('api/v1');
+    expect(config.get<AppConfig['apiPrefix']>('app.apiPrefix')).toBe('api');
     expect(config.get<AppConfig['throttleTtl']>('app.throttleTtl')).toBe(60);
     expect(config.get<AppConfig['throttleLimit']>('app.throttleLimit')).toBe(
       100,

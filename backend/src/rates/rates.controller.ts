@@ -4,7 +4,7 @@ import { Public } from '../auth/decorators/public.decorator';
 import { RatesService } from './rates.service';
 
 @ApiTags('rates')
-@Controller('rates')
+@Controller({ path: 'rates', version: '1' })
 export class RatesController {
   constructor(private readonly ratesService: RatesService) {}
 

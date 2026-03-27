@@ -7,7 +7,7 @@ import { User } from '../users/entities/user.entity';
 @ApiTags('admin/config')
 @ApiBearerAuth()
 @UseGuards(SuperAdminGuard)
-@Controller('admin/config')
+@Controller({ path: 'admin/config', version: '1' })
 export class AppConfigController {
   constructor(private readonly appConfigService: AppConfigService) {}
 

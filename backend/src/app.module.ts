@@ -44,6 +44,8 @@ import { PushModule } from './push/push.module';
 import { WaitlistModule } from './waitlist/waitlist.module';
 import { KycModule } from './kyc/kyc.module';
 import { ReportsModule } from './reports/reports.module';
+import { ApiVersionModule } from './api-version/api-version.module';
+import { DeprecationHeadersInterceptor } from './api-version/deprecation-headers.interceptor';
 
 @Module({
   imports: [
@@ -85,6 +87,7 @@ import { ReportsModule } from './reports/reports.module';
     }),
 
     HealthModule,
+    ApiVersionModule,
     SorobanModule,
 
     // 6. Email — async transactional delivery via ZeptoMail + BullMQ.
@@ -164,6 +167,10 @@ import { ReportsModule } from './reports/reports.module';
     {
       provide: APP_INTERCEPTOR,
       useClass: ResponseInterceptor,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: DeprecationHeadersInterceptor,
     },
     {
       provide: APP_INTERCEPTOR,

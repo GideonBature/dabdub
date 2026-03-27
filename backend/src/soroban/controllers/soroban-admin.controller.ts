@@ -16,7 +16,7 @@ import { PaginatedContractEventsDto, PaginatedReconciliationAlertsDto } from '..
  */
 @ApiTags('Admin - Blockchain Events')
 @ApiBearerAuth('access-token')
-@Controller('admin/blockchain')
+@Controller({ path: 'admin/blockchain', version: '1' })
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(Role.ADMIN, Role.SUPER_ADMIN)
 export class SorobanAdminController {

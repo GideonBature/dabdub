@@ -1,6 +1,6 @@
 process.env.PORT = '3000';
 process.env.NODE_ENV = 'test';
-process.env.API_PREFIX = '/api/v1';
+process.env.API_PREFIX = 'api';
 process.env.THROTTLE_TTL = '60';
 process.env.THROTTLE_LIMIT = '100';
 process.env.FRONTEND_URL = 'http://localhost:3001';

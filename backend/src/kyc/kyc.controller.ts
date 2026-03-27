@@ -30,7 +30,7 @@ type AuthReq = Request & { user: User };
 
 @ApiTags('kyc')
 @ApiBearerAuth()
-@Controller()
+@Controller({ version: '1' })
 export class KycController {
   constructor(private readonly kycService: KycService) {}
 

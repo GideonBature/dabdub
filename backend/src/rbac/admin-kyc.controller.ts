@@ -9,7 +9,7 @@ import { AuditInterceptor, Audit } from '../audit/audit.interceptor';
 
 @ApiTags('admin')
 @ApiBearerAuth()
-@Controller('admin/kyc')
+@Controller({ path: 'admin/kyc', version: '1' })
 @UseGuards(RolesGuard, PermissionsGuard)
 @UseInterceptors(AuditInterceptor)
 export class AdminKycController {

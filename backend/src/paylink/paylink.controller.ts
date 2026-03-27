@@ -34,7 +34,7 @@ type AuthenticatedRequest = Request & { user: User };
 
 @ApiTags('paylinks')
 @ApiBearerAuth()
-@Controller('paylinks')
+@Controller({ path: 'paylinks', version: '1' })
 export class PayLinkController {
   constructor(private readonly payLinkService: PayLinkService) {}
 

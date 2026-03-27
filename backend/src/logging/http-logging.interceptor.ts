@@ -19,6 +19,11 @@ type RequestLike = {
 
 type ResponseLike = { statusCode?: number };
 
+function apiVersionFromPath(path: string): string | null {
+  const m = path.match(/\/api\/v(\d+)(?:\/|$)/);
+  return m?.[1] ? `v${m[1]}` : null;
+}
+
 @Injectable()
 export class HttpLoggingInterceptor implements NestInterceptor {
   constructor(
@@ -36,6 +41,7 @@ export class HttpLoggingInterceptor implements NestInterceptor {
     const path = req?.originalUrl ?? req?.url ?? '';
     const correlationId = req?.correlationId;
     const userId = req?.user?.id;
+    const apiVersion = apiVersionFromPath(path);
 
     return next.handle().pipe(
       tap(() => {
@@ -46,6 +52,7 @@ export class HttpLoggingInterceptor implements NestInterceptor {
           event: 'http_request_completed',
           method,
           path,
+          apiVersion,
           statusCode,
           latencyMs,
           userId: userId ?? null,
@@ -65,6 +72,7 @@ export class HttpLoggingInterceptor implements NestInterceptor {
           event: 'http_request_failed',
           method,
           path,
+          apiVersion,
           statusCode,
           latencyMs,
           userId: userId ?? null,

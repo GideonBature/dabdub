@@ -21,7 +21,7 @@ import { PasskeyCredentialResponseDto } from './dto/passkey-credential-response.
 import { TokenResponseDto } from '../auth/dto/token-response.dto';
 
 @ApiTags('Passkey')
-@Controller('passkey')
+@Controller({ path: 'passkey', version: '1' })
 export class PasskeyController {
   constructor(private readonly passkeyService: PasskeyService) {}
 

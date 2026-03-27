@@ -24,7 +24,7 @@ interface RequestWithUser {
 
 @ApiTags('admin')
 @ApiBearerAuth()
-@Controller('admin/permissions')
+@Controller({ path: 'admin/permissions', version: '1' })
 @UseGuards(RolesGuard)
 @Roles(Role.SuperAdmin)
 @UseInterceptors(AuditInterceptor)

@@ -12,7 +12,7 @@ import { TestEmailDto } from './dto/test-email.dto';
 
 @ApiTags('admin/email')
 @ApiBearerAuth()
-@Controller('admin/email')
+@Controller({ path: 'admin/email', version: '1' })
 export class EmailAdminController {
   constructor(private readonly zeptoMail: ZeptoMailService) {}
 

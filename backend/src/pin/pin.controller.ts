@@ -25,7 +25,7 @@ type AuthenticatedRequest = Request & { user: User };
 
 @ApiTags('pin')
 @ApiBearerAuth()
-@Controller('pin')
+@Controller({ path: 'pin', version: '1' })
 export class PinController {
   constructor(private readonly pinService: PinService) {}
 

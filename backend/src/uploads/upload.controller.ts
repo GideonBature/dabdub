@@ -11,7 +11,7 @@ interface AuthRequest {
 
 @ApiTags('uploads')
 @ApiBearerAuth()
-@Controller('uploads')
+@Controller({ path: 'uploads', version: '1' })
 export class UploadController {
   constructor(private readonly uploadService: UploadService) {}
 

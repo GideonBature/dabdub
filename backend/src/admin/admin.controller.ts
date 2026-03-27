@@ -27,7 +27,7 @@ import { AuditInterceptor, Audit } from '../audit/audit.interceptor';
 @ApiBearerAuth()
 @UseGuards(RolesGuard)
 @UseInterceptors(AuditInterceptor)
-@Controller('admin')
+@Controller({ path: 'admin', version: '1' })
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 

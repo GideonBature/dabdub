@@ -29,7 +29,7 @@ type AuthenticatedRequest = Request & { user: User };
 
 @ApiTags('bank-accounts')
 @ApiBearerAuth()
-@Controller('bank-accounts')
+@Controller({ path: 'bank-accounts', version: '1' })
 export class BankAccountsController {
   constructor(private readonly bankAccountsService: BankAccountsService) {}
 

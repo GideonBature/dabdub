@@ -29,7 +29,7 @@ interface RequestWithUser {
 
 @ApiTags('auth')
 @ApiBearerAuth()
-@Controller('auth')
+@Controller({ path: 'auth', version: '1' })
 export class AuthController {
   constructor(
     private readonly authService: AuthService,

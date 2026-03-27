@@ -17,7 +17,7 @@ import { MerchantsService } from './merchants.service';
 
 @ApiTags('admin/merchants')
 @ApiBearerAuth()
-@Controller('admin/merchants')
+@Controller({ path: 'admin/merchants', version: '1' })
 export class MerchantsAdminController {
   constructor(private readonly merchantsService: MerchantsService) {}
 

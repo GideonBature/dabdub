@@ -33,7 +33,7 @@ import { StellarHealthIndicator } from './stellar.health';
  */
 @ApiTags('health')
 @ApiBearerAuth()
-@Controller('health')
+@Controller({ path: 'health', version: '1' })
 export class HealthController {
   constructor(
     private readonly health: HealthCheckService,

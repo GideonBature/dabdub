@@ -7,7 +7,7 @@ import { TokenResponseDto } from '../../auth/dto/token-response.dto';
 import { Public } from '../../auth/decorators/public.decorator';
 
 @ApiTags('admin / auth')
-@Controller('admin/auth')
+@Controller({ path: 'admin/auth', version: '1' })
 export class AdminAuthController {
   constructor(private readonly adminAuthService: AdminAuthService) {}
 

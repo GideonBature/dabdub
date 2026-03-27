@@ -43,7 +43,7 @@ class StubAuditLogPort implements AuditLogPort {
 
 @ApiTags('admin / fraud')
 @ApiBearerAuth()
-@Controller('admin/fraud')
+@Controller({ path: 'admin/fraud', version: '1' })
 @UseGuards(RolesGuard)
 @Roles(Role.Admin, Role.SuperAdmin)
 export class FraudAdminController {

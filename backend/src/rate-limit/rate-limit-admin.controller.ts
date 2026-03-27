@@ -20,7 +20,7 @@ import { RolesGuard } from '../rbac/guards/roles.guard';
 
 @ApiTags('admin / rate-limits')
 @ApiBearerAuth()
-@Controller('admin/rate-limits')
+@Controller({ path: 'admin/rate-limits', version: '1' })
 @UseGuards(RolesGuard)
 @Roles(Role.Admin, Role.SuperAdmin)
 export class RateLimitAdminController {

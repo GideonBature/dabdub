@@ -19,7 +19,7 @@ import { Public } from '../auth/decorators/public.decorator';
 import { SuperAdminGuard } from '../common/guards/super-admin.guard';
 
 @ApiTags('waitlist')
-@Controller()
+@Controller({ version: '1' })
 export class WaitlistController {
   constructor(private readonly waitlistService: WaitlistService) {}
 
